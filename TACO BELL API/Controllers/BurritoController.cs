@@ -20,13 +20,18 @@ namespace TACO_BELL_API.Controllers
         }
 
         [HttpGet("Name")]
-        public Burrito GetByID(string name)
+        public Burrito GetByName(string name)
         {
             return dbContext.Burritos.FirstOrDefault(b => b.Name.Contains(name));
         }
+        [HttpGet("beans")]
+        public List<Burrito> GetByBeans(bool beans)
+        {
+            return dbContext.Burritos.Where(b => b.Bean == beans).ToList();
+        }
 
         [HttpGet("{Id}")]
-    public List<Burrito> GetById(int Id)
+    public List<Burrito> GetByBurritoId(int Id)
     {
         return dbContext.Burritos.Where(b => b.Id == Id).ToList();
     }
@@ -34,7 +39,7 @@ namespace TACO_BELL_API.Controllers
         [HttpPost]
         public Burrito AddBurrito(string name,float cost, bool bean)
         {
-            Burrito newBurrito= new Burrito(name,cost,bean);
+            Burrito newBurrito= new Burrito() {Name= name,Cost= cost,Bean =bean };
 
             dbContext.Burritos.Add(newBurrito);
             dbContext.SaveChanges();
@@ -44,24 +49,25 @@ namespace TACO_BELL_API.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         public Burrito DeleteBurrito(int Id)
         {
             Burrito b = dbContext.Burritos.FirstOrDefault(b=>b.Id == Id);
-            dbContext.Remove(b);
+            dbContext.Burritos.Remove(b);
             dbContext.SaveChanges();
 
             return b;
         }
 
-        [HttpPut]
-        public Burrito UpdateBurrito(string oldName,string newName)
+        [HttpPut("{Id}")]
+        public Burrito UpdateBurrito(int id, string name)
         {
-            Burrito b = dbContext.Burritos.FirstOrDefault(b=> b.Name == oldName);
-           b.Name = newName;
-            dbContext.SaveChanges();
+            Burrito b = dbContext.Burritos.FirstOrDefault(b => b.Id == id);
+            b.Name = name;
             dbContext.Burritos.Update(b);
-                      
+            dbContext.SaveChanges();
+
+
 
             return b;
         }

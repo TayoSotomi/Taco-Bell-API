@@ -18,13 +18,19 @@ namespace TACO_BELL_API.Controllers
         }
 
         [HttpGet("Name")]
-        public Drink GetByID(string name)
+        public Drink GetByName(string name)
         {
             return dbContext.Drinks.FirstOrDefault(b => b.Name.Contains(name));
         }
 
+        [HttpGet("Slushie")]
+        public List<Drink> GetBySlushie(bool Slushie)
+        {
+            return dbContext.Drinks.Where(b => b.Slushie == Slushie).ToList();
+        }
+
         [HttpGet("{Id}")]
-        public List<Drink> GetById(int Id)
+        public List<Drink> GetByDrinkId(int Id)
         {
             return dbContext.Drinks.Where(b => b.Id == Id).ToList();
         }
@@ -32,7 +38,7 @@ namespace TACO_BELL_API.Controllers
         [HttpPost]
         public Drink AddDrink(string name, float cost, bool slushie)
         {
-            Drink newDrink = new Drink(name, cost, slushie);
+            Drink newDrink = new Drink() { Name = name, Cost = cost, Slushie =slushie };
 
             dbContext.Drinks.Add(newDrink);
             dbContext.SaveChanges();
@@ -42,23 +48,24 @@ namespace TACO_BELL_API.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         public Drink DeleteDrink(int Id)
         {
             Drink b = dbContext.Drinks.FirstOrDefault(b => b.Id == Id);
-            dbContext.Remove(b);
+            dbContext.Drinks.Remove(b);
             dbContext.SaveChanges();
 
             return b;
         }
 
-        [HttpPut]
-        public Drink UpdateDrink(string oldName, string newName)
+        [HttpPut("{Id}")]
+        public Drink UpdateDrink(int id,string name)
         {
-            Drink b = dbContext.Drinks.FirstOrDefault(b => b.Name == oldName);
-            b.Name = newName;
-            dbContext.SaveChanges();
+            Drink b = dbContext.Drinks.FirstOrDefault(b => b.Id == id);
+            b.Name = name;
             dbContext.Drinks.Update(b);
+            dbContext.SaveChanges();
+
 
 
             return b;

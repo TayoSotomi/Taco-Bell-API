@@ -18,13 +18,13 @@ namespace TACO_BELL_API.Controllers
         }
 
         [HttpGet("Name")]
-        public Taco GetByID(string name)
+        public Taco GetByName(string name)
         {
             return dbContext.Tacos.FirstOrDefault(b => b.Name.Contains(name));
         }
 
         [HttpGet("{Id}")]
-        public List<Taco> GetById(int Id)
+        public List<Taco> GetTacoById(int Id)
         {
             return dbContext.Tacos.Where(b => b.Id == Id).ToList();
         }
@@ -32,36 +32,40 @@ namespace TACO_BELL_API.Controllers
         [HttpPost]
         public Taco AddTaco(string name, float cost, bool softshell,bool dorito)
         {
-            Taco newTaco = new Taco(name, cost, softshell,dorito);
+            Taco newTaco = new Taco()
+            { Name = name, Cost = cost, SoftShell = softshell,Dorito = dorito };
 
             dbContext.Tacos.Add(newTaco);
+
             dbContext.SaveChanges();
 
 
             return newTaco;
-
+           
         }
 
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         public Taco DeleteTaco(int Id)
         {
             Taco b = dbContext.Tacos.FirstOrDefault(b => b.Id == Id);
-            dbContext.Remove(b);
+            dbContext.Tacos.Remove(b);
             dbContext.SaveChanges();
 
             return b;
         }
 
-        [HttpPut]
-        public Taco UpdateTaco(string oldName, string newName)
+        [HttpPut("{Id}")]
+        public Taco UpdateTaco(int id, string name)
         {
-            Taco b = dbContext.Tacos.FirstOrDefault(b => b.Name == oldName);
-            b.Name = newName;
-            dbContext.SaveChanges();
+            Taco b = dbContext.Tacos.FirstOrDefault(b => b.Id == id);
+            b.Name = name;
             dbContext.Tacos.Update(b);
+            dbContext.SaveChanges();
+
 
 
             return b;
         }
+
     }
 }
